@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Title Forge</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111833;
+      --muted:#8fa3c8;
+      --text:#eef3ff;
+      --accent:#7c5cff;
+      --accent2:#28d7a1;
+      --border:rgba(255,255,255,.08);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
+      background:linear-gradient(180deg,#08101f 0%,#0b1020 100%);
+      color:var(--text);
+    }
+    .wrap{
+      max-width:1400px;
+      margin:0 auto;
+      padding:24px;
+    }
+    .hero{
+      display:flex;
+      gap:16px;
+      align-items:flex-end;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      margin-bottom:18px;
+    }
+    h1{margin:0;font-size:28px}
+    .sub{
+      color:var(--muted);
+      margin-top:6px;
+      max-width:860px;
+      line-height:1.5;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:320px 1fr 380px;
+      gap:16px;
+      align-items:start;
+    }
+    .card,.panel{
+      background:rgba(17,24,51,.88);
+      border:1px solid var(--border);
+      border-radius:18px;
+      box-shadow:0 12px 40px rgba(0,0,0,.22);
+    }
+    .card{padding:16px}
+    .panel{
+      padding:18px;
+      position:sticky;
+      top:16px;
+    }
+    .controls{display:grid;gap:10px}
+    input,select,button,textarea{
+      width:100%;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:#0d1430;
+      color:var(--text);
+      padding:12px 14px;
+      font:inherit;
+    }
+    button{
+      cursor:pointer;
+      background:linear-gradient(135deg,var(--accent),#4dd7ff);
+      border:none;
+      font-weight:700;
+    }
+    .meta{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+    .pill{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(124,92,255,.16);
+      color:#cdbdff;
+      border:1px solid rgba(124,92,255,.28);
+    }
+    .list{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+    }
+    .item{
+      padding:14px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      cursor:pointer;
+      transition:.15s;
+    }
+    .item:hover,.item.active{
+      transform:translateY(-1px);
+      border-color:rgba(124,92,255,.55);
+      background:rgba(124,92,255,.1);
+    }
+    .title{font-weight:700;line-height:1.3}
+    .small{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:8px;
+      line-height:1.45;
+    }
+    .section{margin-top:14px}
+    .label{
+      font-size:12px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      margin-bottom:8px;
+    }
+    .detail h2{
+      margin:0 0 8px 0;
+      font-size:22px;
+    }
+    .detail p{
+      margin:10px 0;
+      line-height:1.55;
+      color:#dce6ff;
+    }
+    .detail textarea{
+      min-height:170px;
+      resize:vertical;
+    }
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .row > *{flex:1 1 140px}
+    .footer{
+      color:var(--muted);
+      font-size:12px;
+      margin-top:10px;
+    }
+    @media (max-width:1100px){
+      .grid{grid-template-columns:1fr}
+      .panel{position:static}
+      .list{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <div>
+        <h1>Title Forge</h1>
+        <div class="sub">
+          A free, static app for browsing title ideas, filters, thumbnail concepts, and on-demand script prompts from the animal-facts system.
+        </div>
+      </div>
+      <div class="meta" id="stats"></div>
+    </div>
+
+    <div class="grid">
+      <aside class="card">
+        <div class="controls">
+          <input id="search" placeholder="Search titles, triggers, keywords" />
+          <select id="variation">
+            <option value="All">All variations</option>
+          </select>
+          <select id="channel">
+            <option value="All">All channels</option>
+          </select>
+          <select id="format">
+            <option value="All">All formats</option>
+          </select>
+          <button id="copyBtn">Copy current script prompt</button>
+        </div>
+        <div class="footer">
+          Works fully offline after deployment. Use GitHub Pages only.
+        </div>
+      </aside>
+
+      <main class="card">
+        <div class="label">Titles</div>
+        <div class="list" id="list"></div>
+      </main>
+
+      <section class="panel detail">
+        <div class="label">Selected idea</div>
+        <h2 id="dTitle">Choose a title</h2>
+        <div class="small" id="dMeta"></div>
+        <p id="dTrig"></p>
+        <p id="dGap"></p>
+        <p id="dThumb"></p>
+        <div class="section">
+          <div class="label">Script prompt</div>
+          <textarea id="prompt" readonly></textarea>
+        </div>
+        <div class="row section">
+          <button id="nextBtn">Next idea</button>
+          <button id="randomBtn">Random idea</button>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const ideas = [
+      {
+        id: 1,
+        title: "Why It Sucks To Be Born As A Parasitic Wasp",
+        variation: "Why It Sucks",
+        channel: "Hidden Frequency",
+        format: "Short",
+        trigger: "Dark empathy and insect horror.",
+        gap: "Why is a tiny predator's life so brutal?",
+        thumb: "Close-up wasp on black background with red text: BORN TO SUFFER.",
+        prompt: "Write a faceless YouTube Short about this idea. Open with a pattern interrupt in the first 3 seconds. Keep the pacing intense, the tone cinematic, and end with a loopable final line."
+      },
+      {
+        id: 2,
+        title: "Every Strange Hybrid Animal Explained In 6 Minutes",
+        variation: "Curiosity Gap",
+        channel: "Fact Abyss",
+        format: "Long-form",
+        trigger: "Completeness and wonder.",
+        gap: "What counts as a hybrid animal?",
+        thumb: "Split-screen hybrid creature with bold text: EVERY STRANGE TYPE.",
+        prompt: "Write a faceless YouTube script with a strong hook, clear structure, re-hooks, and a soft CTA at the end."
+      },
+      {
+        id: 3,
+        title: "The Animals Born Looking Like Mutants, Explained",
+        variation: "Curiosity Gap",
+        channel: "Fact Abyss",
+        format: "Long-form",
+        trigger: "Disgust mixed with scientific authority.",
+        gap: "What makes them look so unnatural?",
+        thumb: "Creature close-up with yellow text: LOOKS FAKE.",
+        prompt: "Write a retention-optimized faceless script with visual beats, tension, and a satisfying explanation."
+      },
+      {
+        id: 4,
+        title: "What Your Cat Really Thinks When You Talk to Them",
+        variation: "Algorithm Optimized",
+        channel: "Dopamend",
+        format: "Long-form",
+        trigger: "Personal relevance and secret knowledge.",
+        gap: "Do pets understand more than we think?",
+        thumb: "Cat face beside human silhouette with text: REALLY THINKS?",
+        prompt: "Write a warm, high-retention script for pet owners, with a hook, examples, and a shareable payoff."
+      },
+      {
+        id: 5,
+        title: "Top 10 Eagles Hunt Their Prey Without Mercy",
+        variation: "Algorithm Optimized",
+        channel: "Hidden Frequency",
+        format: "Long-form",
+        trigger: "Primal drama and scale.",
+        gap: "Why is eagle hunting so extreme?",
+        thumb: "Eagle diving with red text: WITHOUT MERCY.",
+        prompt: "Write a dramatic ranking video script with fast pacing and a big finish."
+      },
+      {
+        id: 6,
+        title: "This Animal Killed More Humans Than You Think",
+        variation: "Curiosity Gap",
+        channel: "Fact Abyss",
+        format: "Short",
+        trigger: "Fear and disbelief.",
+        gap: "What animal is it, and why?",
+        thumb: "Dark silhouette with huge white text: MORE THAN YOU THINK.",
+        prompt: "Write a short-form script with a shocking opening fact and a tight payoff."
+      },
+      {
+        id: 7,
+        title: "You Won't Believe What This Animal Can Do",
+        variation: "Curiosity Gap",
+        channel: "Fact Abyss",
+        format: "Short",
+        trigger: "Disbelief and pattern interrupt.",
+        gap: "What impossible thing does it do?",
+        thumb: "Extreme close-up with bold text: YOU WON'T BELIEVE.",
+        prompt: "Write a fast, loopable Shorts script with one central fact and a strong end beat."
+      },
+      {
+        id: 8,
+        title: "Why It Sucks To Be Born As A Honey Badger",
+        variation: "Why It Sucks",
+        channel: "Hidden Frequency",
+        format: "Short",
+        trigger: "Dark empathy with an iconic animal.",
+        gap: "How can a famous tough animal have a terrible life?",
+        thumb: "Honey badger on black with red text: STILL TERRIBLE.",
+        prompt: "Write a dark, empathetic animal Short with a quick hook and emotional pacing."
+      },
+      {
+        id: 9,
+        title: "The Strongest and Largest Eagle in the World",
+        variation: "Algorithm Optimized",
+        channel: "Hidden Frequency",
+        format: "Long-form",
+        trigger: "Status and superlative curiosity.",
+        gap: "Which eagle actually wins?",
+        thumb: "Eagle spread across frame with text: BIGGEST EVER.",
+        prompt: "Write a search-friendly, authoritative faceless script with a strong opening and clear ranking structure."
+      },
+      {
+        id: 10,
+        title: "Everyone Walked Past Until a Puppy Refused to Leave",
+        variation: "Curiosity Gap",
+        channel: "Dopamend",
+        format: "Long-form",
+        trigger: "Injustice and hope.",
+        gap: "Why did the puppy stay?",
+        thumb: "Puppy at doorway with text: UNTIL IT REFUSED.",
+        prompt: "Write an emotional rescue-story script with rising stakes and a satisfying emotional payoff."
+      }
+    ];
+
+    const list = document.getElementById("list");
+    const search = document.getElementById("search");
+    const variation = document.getElementById("variation");
+    const channel = document.getElementById("channel");
+    const format = document.getElementById("format");
+    const stats = document.getElementById("stats");
+    const dTitle = document.getElementById("dTitle");
+    const dMeta = document.getElementById("dMeta");
+    const dTrig = document.getElementById("dTrig");
+    const dGap = document.getElementById("dGap");
+    const dThumb = document.getElementById("dThumb");
+    const prompt = document.getElementById("prompt");
+    const copyBtn = document.getElementById("copyBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const randomBtn = document.getElementById("randomBtn");
+    let selected = 0;
+
+    function uniq(arr, key) {
+      return [...new Set(arr.map(x => x[key]))].sort();
+    }
+
+    function fill(sel, vals) {
+      vals.forEach(v => {
+        const o = document.createElement("option");
+        o.value = v;
+        o.textContent = v;
+        sel.appendChild(o);
+      });
+    }
+
+    fill(variation, uniq(ideas, "variation"));
+    fill(channel, uniq(ideas, "channel"));
+    fill(format, uniq(ideas, "format"));
+
+    function filtered() {
+      const q = search.value.toLowerCase();
+      return ideas.filter(i =>
+        (variation.value === "All" || i.variation === variation.value) &&
+        (channel.value === "All" || i.channel === channel.value) &&
+        (format.value === "All" || i.format === format.value) &&
+        [i.title, i.trigger, i.gap, i.thumb].join(" ").toLowerCase().includes(q)
+      );
+    }
+
+    function show() {
+      const i = ideas[selected];
+      if (!i) return;
+      dTitle.textContent = i.title;
+      dMeta.textContent = `${i.variation} · ${i.channel} · ${i.format}`;
+      dTrig.textContent = `Trigger: ${i.trigger}`;
+      dGap.textContent = `Curiosity gap: ${i.gap}`;
+      dThumb.textContent = `Thumbnail concept: ${i.thumb}`;
+      prompt.value = i.prompt + " Include B-roll notes, re-hooks, and a soft CTA.";
+      localStorage.setItem("titleforge:selected", String(i.id));
+    }
+
+    function render() {
+      const items = filtered();
+      stats.innerHTML = `<span class="pill">${ideas.length} ideas</span><span class="pill">${items.length} shown</span>`;
+      list.innerHTML = "";
+      items.forEach(i => {
+        const d = document.createElement("div");
+        d.className = "item" + (ideas[selected]?.id === i.id ? " active" : "");
+        d.innerHTML = `<div class="title">${i.title}</div><div class="small">${i.variation} · ${i.channel} · ${i.format}</div>`;
+        d.onclick = () => {
+          selected = ideas.findIndex(x => x.id === i.id);
+          show();
+          render();
+        };
+        list.appendChild(d);
+      });
+      if (!items.length) {
+        list.innerHTML = '<div class="small">No matches.</div>';
+      }
+      if (ideas[selected]) show();
+    }
+
+    search.oninput = render;
+    variation.onchange = render;
+    channel.onchange = render;
+    format.onchange = render;
+
+    copyBtn.onclick = () => navigator.clipboard.writeText(prompt.value);
+    nextBtn.onclick = () => {
+      selected = (selected + 1) % ideas.length;
+      show();
+      render();
+    };
+    randomBtn.onclick = () => {
+      selected = Math.floor(Math.random() * ideas.length);
+      show();
+      render();
+    };
+
+    const saved = Number(localStorage.getItem("titleforge:selected") || 1);
+    selected = Math.max(0, ideas.findIndex(x => x.id === saved));
+    show();
+    render();
+  </script>
+</body>
+</html>
